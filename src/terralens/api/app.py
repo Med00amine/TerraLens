@@ -97,6 +97,8 @@ def create_app(predictor: Predictor | None = None, model_path: str | Path | None
                 logger.error(
                     "No model at %s: run `terralens download-model` or set TERRALENS_MODEL", path
                 )
+        if app.state.predictor is not None:
+            app.state.predictor.warmup()
         yield
 
     app = FastAPI(
