@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TerraLens · Satellite land-cover AI</title>
+  <meta name="description" content="Classify Sentinel-2 satellite imagery into land-cover classes, see what the model looked at, and map entire scenes.">
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="/" aria-label="TerraLens home">
+        <img src="/static/favicon.svg" alt="" width="36" height="36">
+        <span>
+          <strong>TerraLens</strong>
+          <small>Land-cover intelligence from satellite imagery</small>
+        </span>
+      </a>
+      <div class="model-badge" id="model-badge" title="Deployed model">
+        <span class="dot"></span><span id="model-text">Loading model…</span>
+      </div>
+      <nav class="links">
+        <a href="/docs" target="_blank" rel="noopener">API docs</a>
+        <a href="https://github.com/Med00amine/TerraLens" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="tabs" role="tablist" aria-label="Mode">
+      <button role="tab" id="tab-btn-classify" aria-controls="tab-classify" aria-selected="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 12h16M12 4v16"/></svg>
+        Classify a tile
+      </button>
+      <button role="tab" id="tab-btn-map" aria-controls="tab-map" aria-selected="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>
+        Map a scene
+      </button>
+    </div>
+
+    <!-- ------------------------------------------------------------------ Classify -->
+    <section id="tab-classify" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-classify">
+      <div class="layout">
+        <div class="card">
+          <h2><span class="step">1</span> Choose a satellite tile</h2>
+          <p class="hint">A 64 × 64 px Sentinel-2 RGB tile covers 640 m × 640 m on the ground.</p>
+          <label class="dropzone" id="tile-drop" tabindex="0">
+            <input type="file" accept="image/*" hidden>
+            <img class="preview pixelated" alt="Selected tile" hidden>
+            <span class="drop-text">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0-4 4m4-4 4 4M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+              Drop an image here or <u>browse</u>
+            </span>
+          </label>
+          <h3>Or try a sample from the held-out test set</h3>
+          <div class="samples" id="tile-samples"></div>
+        </div>
+
+        <div class="card result" id="tile-result" aria-live="polite">
+          <div class="placeholder">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>
+            <p>Pick a tile to see what land cover it shows and why.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ----------------------------------------------------------------------- Map -->
+    <section id="tab-map" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-map" hidden>
+      <div class="layout map-layout">
+        <div class="card">
+          <h2><span class="step">1</span> Choose a scene</h2>
+          <p class="hint">Any RGB satellite image at roughly 10 m/pixel, up to 4096 × 4096 px.</p>
+          <label class="dropzone compact" id="scene-drop" tabindex="0">
+            <input type="file" accept="image/*" hidden>
+            <img class="preview" alt="Selected scene" hidden>
+            <span class="drop-text">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0-4 4m4-4 4 4M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+              Drop a scene or <u>browse</u>
+            </span>
+          </label>
+          <div class="samples scenes" id="scene-samples"></div>
+
+          <h2><span class="step">2</span> Settings</h2>
+          <label class="field">
+            <span>Ground resolution</span>
+            <select id="gsd">
+              <option value="64" selected>10 m/px · Sentinel-2</option>
+              <option value="128">5 m/px</option>
+              <option value="32">20 m/px</option>
+            </select>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="smooth" checked>
+            <span class="track"></span>
+            <span>Smooth boundaries <small>(overlapping tiles, 4× more compute)</small></span>
+          </label>
+          <button class="primary" id="run-map" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            Create land-cover map
+          </button>
+        </div>
+
+        <div class="card result" id="map-result" aria-live="polite">
+          <div class="placeholder">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>
+            <p>Map every 640 m × 640 m cell of a scene and measure how much land each class covers.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      Trained on <a href="https://github.com/phelber/EuroSAT" target="_blank" rel="noopener">EuroSAT</a>
+      (Sentinel-2, 10 classes). Contains modified Copernicus Sentinel data.
+      Predictions are model estimates. Verify them before you make decisions.
+    </p>
+  </footer>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+  <script type="module" src="/static/app.js"></script>
+</body>
+</html>
