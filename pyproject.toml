@@ -49,6 +49,8 @@ addopts = "-q"
 filterwarnings = [
     # Emitted inside torch.utils.data when pin_memory=True; not actionable here.
     "ignore:The argument 'device' of Tensor:DeprecationWarning",
+    # Starlette's TestClient deprecation; tests only.
+    "ignore:Using `httpx` with `starlette.testclient` is deprecated",
 ]
 
 [tool.ruff]
