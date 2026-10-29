@@ -52,6 +52,12 @@ def main() -> None:
     parser.add_argument("--max-cloud", type=float, default=3.0)
     parser.add_argument("--name", default="sentinel2_scene")
     parser.add_argument(
+        "--format",
+        choices=["png", "jpg"],
+        default="png",
+        help="png is lossless; JPEG artifacts measurably hurt predictions",
+    )
+    parser.add_argument(
         "--out-dir", type=Path, default=Path("src/terralens/api/static/samples/scenes")
     )
     args = parser.parse_args()
@@ -80,8 +86,10 @@ def main() -> None:
         crs = src.crs.to_string()
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    out = args.out_dir / f"{args.name}.jpg"
-    Image.fromarray(np.moveaxis(rgb, 0, -1)).save(out, quality=92)
+    out = args.out_dir / f"{args.name}.{args.format}"
+    Image.fromarray(np.moveaxis(rgb, 0, -1)).save(
+        out, **({"quality": 95} if args.format == "jpg" else {})
+    )
     meta = {
         "scene": item["id"],
         "date": item["properties"]["datetime"],

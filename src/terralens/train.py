@@ -40,6 +40,7 @@ class TrainConfig:
     weight_decay: float = 0.05
     label_smoothing: float = 0.1
     radiometric_aug: bool = False
+    jpeg_aug: bool = True
     patience: int = 4
     num_workers: int = 4
     seed: int = 42
@@ -149,6 +150,7 @@ def train(config: TrainConfig) -> dict:
         val_fraction=config.val_fraction,
         test_fraction=config.test_fraction,
         radiometric_aug=config.radiometric_aug,
+        jpeg_aug=config.jpeg_aug,
     )
     print(
         f"Data: {len(data.split.train)} train / {len(data.split.val)} val / "
@@ -253,6 +255,12 @@ def parse_args(argv: list[str] | None = None) -> TrainConfig:
         "--radiometric-aug",
         action="store_true",
         help="experimental L1C->L2A colour augmentation (see data.RadiometricJitter)",
+    )
+    parser.add_argument(
+        "--no-jpeg-aug",
+        dest="jpeg_aug",
+        action="store_false",
+        help="disable random JPEG re-compression (see data.RandomJPEG)",
     )
     numeric = {"int": int, "float": float}  # annotations are strings (postponed evaluation)
     for f in fields(TrainConfig):

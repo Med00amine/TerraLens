@@ -110,3 +110,22 @@ def test_train_transforms_include_radiometric_jitter_only_when_asked():
     assert "RadiometricJitter" in names(build_transforms(64, train=True, radiometric=True))
     assert "RadiometricJitter" not in names(build_transforms(64, train=True))
     assert "RadiometricJitter" not in names(build_transforms(64, train=False, radiometric=True))
+
+
+def test_random_jpeg_changes_pixels_but_not_size():
+    from terralens.data import RandomJPEG
+
+    rng = np.random.default_rng(1)
+    img = Image.fromarray(rng.integers(0, 256, size=(64, 64, 3), dtype=np.uint8))
+    out = RandomJPEG(quality=(30, 30), p=1.0)(img)
+    assert out.size == img.size and out.mode == "RGB"
+    assert np.abs(np.asarray(out, float) - np.asarray(img, float)).mean() > 5
+    assert RandomJPEG(p=0.0)(img) is img
+
+
+def test_jpeg_augmentation_runs_before_resize():
+    names = [type(t).__name__ for t in build_transforms(96, train=True, jpeg=True).transforms]
+    assert names.index("RandomJPEG") < names.index("Resize")
+    assert "RandomJPEG" not in [
+        type(t).__name__ for t in build_transforms(96, train=False).transforms
+    ]
