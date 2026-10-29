@@ -16,7 +16,7 @@ from pathlib import Path
 from terralens.predictor import default_model_path
 
 RELEASE_URL = "https://github.com/Med00amine/TerraLens/releases/download/v1.0.0/terralens-v1.0.0.pt"
-RELEASE_SHA256 = None  # set when the v1.0.0 weights are published
+RELEASE_SHA256 = "07fccef73ebdbb120413057e397a90903ef178ac993007257365f1c12c89d55f"
 
 
 def sha256sum(path: str | Path) -> str:
