@@ -40,7 +40,7 @@ class TrainConfig:
     weight_decay: float = 0.05
     label_smoothing: float = 0.1
     radiometric_aug: bool = False
-    jpeg_aug: bool = False
+    jpeg_aug: bool = True
     patience: int = 4
     num_workers: int = 4
     seed: int = 42
@@ -257,7 +257,10 @@ def parse_args(argv: list[str] | None = None) -> TrainConfig:
         help="experimental L1C->L2A colour augmentation (see data.RadiometricJitter)",
     )
     parser.add_argument(
-        "--jpeg-aug", action="store_true", help="random JPEG re-compression (see data.RandomJPEG)"
+        "--no-jpeg-aug",
+        dest="jpeg_aug",
+        action="store_false",
+        help="disable random JPEG re-compression (see data.RandomJPEG)",
     )
     numeric = {"int": int, "float": float}  # annotations are strings (postponed evaluation)
     for f in fields(TrainConfig):

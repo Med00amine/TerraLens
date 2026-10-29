@@ -47,3 +47,8 @@ def test_train_end_to_end_on_tiny_dataset(image_folder, tmp_path):
 def test_radiometric_augmentation_is_opt_in():
     assert parse_args([]).radiometric_aug is False
     assert parse_args(["--radiometric-aug"]).radiometric_aug is True
+
+
+def test_jpeg_augmentation_is_on_by_default():
+    assert parse_args([]).jpeg_aug is True
+    assert parse_args(["--no-jpeg-aug"]).jpeg_aug is False
