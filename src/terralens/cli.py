@@ -12,6 +12,7 @@ COMMANDS = {
     "evaluate": ("terralens.evaluate", "evaluate or compare checkpoints"),
     "predict": ("terralens.predictor", "classify tiles (optionally with Grad-CAM)"),
     "map": ("terralens.mapping", "create a land-cover map of a large scene"),
+    "serve": ("terralens.api.app", "run the REST API and web interface"),
 }
 
 
