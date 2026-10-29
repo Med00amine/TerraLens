@@ -42,3 +42,8 @@ def test_train_end_to_end_on_tiny_dataset(image_folder, tmp_path):
     assert ckpt["img_size"] == 32
     assert ckpt["metrics"]["test_acc"] == summary["test_acc"]
     assert ckpt["config"]["seed"] == 42
+
+
+def test_radiometric_augmentation_is_opt_in():
+    assert parse_args([]).radiometric_aug is False
+    assert parse_args(["--radiometric-aug"]).radiometric_aug is True
