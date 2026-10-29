@@ -39,6 +39,7 @@ class TrainConfig:
     lr: float = 1e-3
     weight_decay: float = 0.05
     label_smoothing: float = 0.1
+    radiometric_aug: bool = False
     patience: int = 4
     num_workers: int = 4
     seed: int = 42
@@ -147,6 +148,7 @@ def train(config: TrainConfig) -> dict:
         seed=config.seed,
         val_fraction=config.val_fraction,
         test_fraction=config.test_fraction,
+        radiometric_aug=config.radiometric_aug,
     )
     print(
         f"Data: {len(data.split.train)} train / {len(data.split.val)} val / "
@@ -247,6 +249,11 @@ def parse_args(argv: list[str] | None = None) -> TrainConfig:
     parser.add_argument("--no-download", dest="download", action="store_false")
     parser.add_argument("--no-pretrained", dest="pretrained", action="store_false")
     parser.add_argument("--no-amp", dest="amp", action="store_false")
+    parser.add_argument(
+        "--radiometric-aug",
+        action="store_true",
+        help="experimental L1C->L2A colour augmentation (see data.RadiometricJitter)",
+    )
     numeric = {"int": int, "float": float}  # annotations are strings (postponed evaluation)
     for f in fields(TrainConfig):
         if f.type in numeric:
