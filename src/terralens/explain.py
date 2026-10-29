@@ -38,8 +38,11 @@ class GradCAM:
     Use as a context manager (or call `remove()`) to detach the hook afterwards.
     """
 
-    def __init__(self, model: nn.Module, target_layer: nn.Module | None = None):
+    def __init__(
+        self, model: nn.Module, target_layer: nn.Module | None = None, temperature: float = 1.0
+    ):
         self.model = model
+        self.temperature = temperature
         self.target_layer = (
             target_layer if target_layer is not None else gradcam_target_layer(model)
         )
@@ -70,7 +73,7 @@ class GradCAM:
             # Requiring input gradients keeps the hook working even with frozen weights.
             x = x.detach().requires_grad_(True)
             logits = self.model(x)
-            probs = logits.softmax(dim=1)[0].detach()
+            probs = (logits / self.temperature).softmax(dim=1)[0].detach()
             if class_idx is None:
                 class_idx = int(probs.argmax())
             self.model.zero_grad(set_to_none=True)

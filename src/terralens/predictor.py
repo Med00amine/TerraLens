@@ -63,6 +63,8 @@ class Predictor:
         self.model = model_from_checkpoint(checkpoint, self.device)
         self.class_names: list[str] = list(checkpoint["class_names"])
         self.img_size = int(checkpoint["img_size"])
+        # Fitted by temperature scaling; 1.0 for uncalibrated checkpoints.
+        self.temperature = float(checkpoint.get("temperature", 1.0))
         self._mean = torch.tensor(checkpoint["mean"], device=self.device).view(1, 3, 1, 1)
         self._std = torch.tensor(checkpoint["std"], device=self.device).view(1, 3, 1, 1)
         self._transform = build_transforms(
@@ -101,8 +103,8 @@ class Predictor:
     @torch.inference_mode()
     def predict_proba(self, batch: torch.Tensor) -> np.ndarray:
         """Class probabilities (N, C) for a normalised batch."""
-        logits = self.model(batch.to(self.device))
-        return torch.softmax(logits.float(), dim=1).cpu().numpy()
+        logits = self.model(batch.to(self.device)).float() / self.temperature
+        return torch.softmax(logits, dim=1).cpu().numpy()
 
     def _ranked(self, probs: np.ndarray, top_k: int | None) -> list[Prediction]:
         order = np.argsort(-probs)[: top_k or len(probs)]
@@ -131,7 +133,7 @@ class Predictor:
                 raise ValueError(f"Unknown class {class_name!r}")
             class_idx = self.class_names.index(class_name)
         x = self.preprocess(image).to(self.device)
-        with self._explain_lock, GradCAM(self.model) as cam_fn:
+        with self._explain_lock, GradCAM(self.model, temperature=self.temperature) as cam_fn:
             heatmap, idx, probs = cam_fn(x, class_idx)
         probs = probs.numpy()
         return Explanation(
@@ -146,6 +148,7 @@ class Predictor:
         return {
             "architecture": self.checkpoint["architecture"],
             "img_size": self.img_size,
+            "temperature": self.temperature,
             "parameters": count_parameters(self.model),
             "classes": [
                 {"name": n, "label": label_for(n), "color": color_for(n)} for n in self.class_names
