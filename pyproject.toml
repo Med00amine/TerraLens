@@ -46,6 +46,10 @@ terralens = ["api/static/*", "api/static/**/*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+filterwarnings = [
+    # Emitted inside torch.utils.data when pin_memory=True; not actionable here.
+    "ignore:The argument 'device' of Tensor:DeprecationWarning",
+]
 
 [tool.ruff]
 line-length = 100
