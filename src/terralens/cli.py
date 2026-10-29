@@ -10,6 +10,8 @@ from terralens import __version__
 COMMANDS = {
     "train": ("terralens.train", "train a land-cover classifier"),
     "evaluate": ("terralens.evaluate", "evaluate or compare checkpoints"),
+    "predict": ("terralens.predictor", "classify tiles (optionally with Grad-CAM)"),
+    "map": ("terralens.mapping", "create a land-cover map of a large scene"),
 }
 
 
