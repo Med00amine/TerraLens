@@ -18,6 +18,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 
+from terralens.calibration import expected_calibration_error
 from terralens.checkpoint import load_checkpoint, model_from_checkpoint
 from terralens.data import TransformedSubset, build_transforms, load_dataset, stratified_split
 from terralens.models import count_parameters
@@ -25,13 +26,13 @@ from terralens.models import count_parameters
 
 @torch.no_grad()
 def predict_loader(
-    model: nn.Module, loader: DataLoader, device: torch.device
+    model: nn.Module, loader: DataLoader, device: torch.device, temperature: float = 1.0
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Labels and softmax probabilities for every sample in `loader`."""
+    """Labels and (temperature-scaled) softmax probabilities for every sample."""
     labels, probs = [], []
     for images, y in loader:
-        logits = model(images.to(device))
-        probs.append(torch.softmax(logits.float(), dim=1).cpu())
+        logits = model(images.to(device)).float() / temperature
+        probs.append(torch.softmax(logits, dim=1).cpu())
         labels.append(y)
     return torch.cat(labels).numpy(), torch.cat(probs).numpy()
 
@@ -129,10 +130,12 @@ def evaluate_checkpoint(
         persistent_workers=False,
     )
     model = model_from_checkpoint(ckpt, device)
-    y_true, probs = predict_loader(model, loader, device)
+    y_true, probs = predict_loader(model, loader, device, ckpt.get("temperature", 1.0))
     report = classification_report(y_true, probs.argmax(axis=1), ckpt["class_names"])
     report.update(
         {
+            "ece": expected_calibration_error(probs, y_true),
+            "temperature": ckpt.get("temperature", 1.0),
             "architecture": ckpt["architecture"],
             "img_size": ckpt["img_size"],
             "params": count_parameters(model),
