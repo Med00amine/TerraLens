@@ -14,6 +14,7 @@ COMMANDS = {
     "predict": ("terralens.predictor", "classify tiles (optionally with Grad-CAM)"),
     "map": ("terralens.mapping", "create a land-cover map of a large scene"),
     "serve": ("terralens.api.app", "run the REST API and web interface"),
+    "download-model": ("terralens.download", "download the released model weights"),
 }
 
 
