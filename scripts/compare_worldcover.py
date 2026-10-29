@@ -153,7 +153,10 @@ def main() -> None:
     args = parser.parse_args()
 
     meta = json.loads(Path(f"docs/{args.scene}.json").read_text())
-    image = Image.open(args.scene_dir / f"{args.scene}.jpg").convert("RGB")
+    path = next(
+        p for ext in ("png", "jpg") if (p := args.scene_dir / f"{args.scene}.{ext}").is_file()
+    )
+    image = Image.open(path).convert("RGB")
     predictor = Predictor.from_path(args.model)
     result = map_scene(predictor, image)  # stride = tile, so cells align with tiles
 

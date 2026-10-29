@@ -75,7 +75,7 @@ def main() -> None:
 
     scenes_dir = STATIC / "scenes"
     scenes_dir.mkdir(parents=True, exist_ok=True)
-    mosaic.save(scenes_dir / "test_tile_mosaic.jpg", quality=95)
+    mosaic.save(scenes_dir / "test_tile_mosaic.png")  # lossless: JPEG costs ~2 points
     truth = {"tile_px": TILE, "classes": classes, "layout": layout.tolist()}
     Path("docs").mkdir(exist_ok=True)
     Path("docs/mosaic_ground_truth.json").write_text(json.dumps(truth))
