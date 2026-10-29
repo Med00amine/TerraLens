@@ -1,0 +1,68 @@
+[
+  {
+    "run": "resnet50-128",
+    "architecture": "resnet50",
+    "img_size": 128,
+    "params_m": 23.528522,
+    "size_mb": 90.03239727020264,
+    "accuracy": 0.9901234567901235,
+    "macro_f1": 0.9896716479229383,
+    "cpu_ms": 16.913400002522394,
+    "train_minutes": 526.5663172533333
+  },
+  {
+    "run": "resnet18-224",
+    "architecture": "resnet18",
+    "img_size": 224,
+    "params_m": 11.181642,
+    "size_mb": 42.72101879119873,
+    "accuracy": 0.9883950617283951,
+    "macro_f1": 0.9879982180063536,
+    "cpu_ms": 19.92939999763621,
+    "train_minutes": 22.57452572000002
+  },
+  {
+    "run": "efficientnet_b0-128",
+    "architecture": "efficientnet_b0",
+    "img_size": 128,
+    "params_m": 4.020358,
+    "size_mb": 15.584795951843262,
+    "accuracy": 0.9881481481481481,
+    "macro_f1": 0.9877117780101525,
+    "cpu_ms": 8.70914999541128,
+    "train_minutes": 15.147241288333316
+  },
+  {
+    "run": "mobilenet_v3_large-128",
+    "architecture": "mobilenet_v3_large",
+    "img_size": 128,
+    "params_m": 4.214842,
+    "size_mb": 16.24952983856201,
+    "accuracy": 0.9881481481481481,
+    "macro_f1": 0.9876029629855587,
+    "cpu_ms": 5.217949998041149,
+    "train_minutes": 15.13571102666665
+  },
+  {
+    "run": "resnet18-128",
+    "architecture": "resnet18",
+    "img_size": 128,
+    "params_m": 11.181642,
+    "size_mb": 42.72101879119873,
+    "accuracy": 0.9861728395061728,
+    "macro_f1": 0.9854154752399976,
+    "cpu_ms": 8.090350005659275,
+    "train_minutes": 6.123468651666674
+  },
+  {
+    "run": "resnet18-64",
+    "architecture": "resnet18",
+    "img_size": 64,
+    "params_m": 11.181642,
+    "size_mb": 42.72101879119873,
+    "accuracy": 0.9819753086419754,
+    "macro_f1": 0.9813917928859123,
+    "cpu_ms": 3.6292999939178117,
+    "train_minutes": 2.7226964966666856
+  }
+]

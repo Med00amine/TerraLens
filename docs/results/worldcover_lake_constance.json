@@ -1,0 +1,113 @@
+{
+  "tiles_compared": 384,
+  "agreement": 0.5859375,
+  "cohen_kappa": 0.45211281508269097,
+  "recall_vs_worldcover": {
+    "Water": 0.8153846153846154,
+    "Built-up": 1.0,
+    "Tree cover": 0.5141242937853108,
+    "Cropland": 0.29411764705882354,
+    "Grassland": 0.4235294117647059
+  },
+  "confusion_matrix": [
+    [
+      53,
+      1,
+      11,
+      0,
+      0
+    ],
+    [
+      0,
+      40,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      42,
+      91,
+      9,
+      34
+    ],
+    [
+      0,
+      3,
+      3,
+      5,
+      6
+    ],
+    [
+      0,
+      17,
+      16,
+      16,
+      36
+    ]
+  ],
+  "labels": [
+    "Water",
+    "Built-up",
+    "Tree cover",
+    "Cropland",
+    "Grassland"
+  ],
+  "homogeneous": {
+    "tiles_compared": 94,
+    "agreement": 0.9042553191489362,
+    "cohen_kappa": 0.8195007467463198,
+    "recall_vs_worldcover": {
+      "Water": 0.864406779661017,
+      "Built-up": 1.0,
+      "Tree cover": 0.9666666666666667
+    },
+    "confusion_matrix": [
+      [
+        51,
+        0,
+        8,
+        0,
+        0
+      ],
+      [
+        0,
+        5,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        29,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "labels": [
+      "Water",
+      "Built-up",
+      "Tree cover",
+      "Cropland",
+      "Grassland"
+    ],
+    "min_purity": 0.8
+  },
+  "scene": "S2B_32TNT_20250808_1_L2A",
+  "model": "resnet18"
+}
