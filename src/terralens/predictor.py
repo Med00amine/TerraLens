@@ -75,6 +75,10 @@ class Predictor:
     def from_path(cls, path: str | Path, device: str = "auto") -> Predictor:
         return cls(load_checkpoint(path), device)
 
+    def warmup(self) -> None:
+        """One dummy forward pass, so the first request doesn't pay for CUDA/cuDNN set-up."""
+        self.predict_proba(torch.zeros(1, 3, self.img_size, self.img_size))
+
     # ------------------------------------------------------------------ preprocessing
     def preprocess(self, image: Image.Image) -> torch.Tensor:
         """A single image as a normalised (1, 3, S, S) tensor, as seen in training."""
