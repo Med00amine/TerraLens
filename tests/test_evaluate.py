@@ -15,27 +15,6 @@ from terralens.evaluate import (
     write_report,
 )
 from terralens.models import build_model
-from terralens.train import TrainConfig, train
-
-
-@pytest.fixture
-def trained_checkpoint(image_folder, tmp_path):
-    out = tmp_path / "run"
-    train(
-        TrainConfig(
-            dataset="folder",
-            data_root=str(image_folder),
-            download=False,
-            pretrained=False,
-            img_size=32,
-            epochs=1,
-            batch_size=8,
-            num_workers=0,
-            amp=False,
-            output_dir=str(out),
-        )
-    )
-    return out / "model.pt"
 
 
 def test_confusion_matrix_counts():
