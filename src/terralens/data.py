@@ -36,11 +36,57 @@ class RandomRotate90:
         return f"{type(self).__name__}()"
 
 
+class RadiometricJitter:
+    """Random per-channel gain and haze offset on uint8 RGB.
+
+    EuroSAT tiles come from top-of-atmosphere (L1C) Sentinel-2 data. Atmospherically
+    corrected (L2A) products lack the blue haze and look darker and greener: on a
+    real L2A scene the mean RGB was about (47, 64, 47) against EuroSAT's
+    (88, 97, 105). This simulates that shift with a per-channel offset and gain.
+
+    Experimental and off by default: in the external validation against ESA
+    WorldCover (`scripts/compare_worldcover.py`) it *lowered* agreement on
+    homogeneous tiles from 92.6% to 71.3%, mostly because darkened training tiles
+    made forest (tree-cover recall 83% -> 20%) ambiguous.
+    """
+
+    def __init__(
+        self,
+        p: float = 0.8,
+        haze: Sequence[float] = (40.0, 35.0, 55.0),
+        haze_range: tuple[float, float] = (-0.25, 1.0),
+        gain_range: tuple[float, float] = (0.8, 1.25),
+        tint: float = 0.07,
+    ):
+        self.p = p
+        self.haze = np.asarray(haze, dtype=np.float32)
+        self.haze_range = haze_range
+        self.gain_range = gain_range
+        self.tint = tint
+
+    @staticmethod
+    def _uniform(low: float, high: float, size: int | tuple = ()) -> np.ndarray:
+        # torch RNG, so DataLoader workers get distinct, seeded streams.
+        return (low + (high - low) * torch.rand(size)).numpy()
+
+    def __call__(self, img: Image.Image) -> Image.Image:
+        if torch.rand(()).item() >= self.p:
+            return img
+        level = self._uniform(*self.haze_range)
+        gain = self._uniform(*self.gain_range) * self._uniform(1 - self.tint, 1 + self.tint, 3)
+        x = np.asarray(img.convert("RGB"), dtype=np.float32) * gain - level * self.haze
+        return Image.fromarray(np.clip(x, 0, 255).round().astype(np.uint8))
+
+    def __repr__(self) -> str:
+        return f"{type(self).__name__}(p={self.p}, haze={self.haze.tolist()})"
+
+
 def build_transforms(
     img_size: int,
     train: bool,
     mean: Sequence[float] = IMAGENET_MEAN,
     std: Sequence[float] = IMAGENET_STD,
+    radiometric: bool = False,
 ) -> transforms.Compose:
     """Preprocessing for training (with augmentation) or evaluation/inference."""
     steps: list = [transforms.Resize((img_size, img_size))]
@@ -49,6 +95,10 @@ def build_transforms(
             transforms.RandomHorizontalFlip(),
             transforms.RandomVerticalFlip(),
             RandomRotate90(),
+        ]
+        if radiometric:
+            steps.append(RadiometricJitter())
+        steps += [
             # No hue jitter: colour is a key cue for separating vegetation classes.
             transforms.ColorJitter(brightness=0.15, contrast=0.15, saturation=0.15),
         ]
@@ -142,10 +192,11 @@ def make_dataloaders(
     seed: int = 42,
     val_fraction: float = 0.15,
     test_fraction: float = 0.15,
+    radiometric_aug: bool = False,
 ) -> DataBundle:
     """Stratified train/val/test loaders over a dataset that yields PIL images."""
     split = stratified_split(dataset.targets, val_fraction, test_fraction, seed)
-    train_tf = build_transforms(img_size, train=True)
+    train_tf = build_transforms(img_size, train=True, radiometric=radiometric_aug)
     eval_tf = build_transforms(img_size, train=False)
 
     loader_kwargs = {

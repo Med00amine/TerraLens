@@ -83,3 +83,30 @@ def test_make_dataloaders_batches(image_folder):
     assert images.shape == (8, 3, 32, 32)
     assert labels.shape == (8,)
     assert sum(len(b[1]) for b in bundle.test) == len(bundle.split.test)
+
+
+def test_radiometric_jitter_shifts_colours_but_keeps_shape():
+    from terralens.data import RadiometricJitter
+
+    img = Image.fromarray(np.full((64, 64, 3), (90, 100, 110), dtype=np.uint8))
+    jitter = RadiometricJitter(p=1.0)
+    torch.manual_seed(0)
+    outputs = [np.asarray(jitter(img), dtype=float) for _ in range(20)]
+    assert all(o.shape == (64, 64, 3) for o in outputs)
+    means = np.array([o.mean(axis=(0, 1)) for o in outputs])
+    assert means.std(axis=0).min() > 3  # colours actually vary between draws
+    assert means[:, 2].min() < 80  # haze removal darkens the blue channel
+
+
+def test_radiometric_jitter_probability_zero_is_identity():
+    from terralens.data import RadiometricJitter
+
+    img = Image.new("RGB", (8, 8), (10, 20, 30))
+    assert RadiometricJitter(p=0.0)(img) is img
+
+
+def test_train_transforms_include_radiometric_jitter_only_when_asked():
+    names = lambda tf: [type(t).__name__ for t in tf.transforms]  # noqa: E731
+    assert "RadiometricJitter" in names(build_transforms(64, train=True, radiometric=True))
+    assert "RadiometricJitter" not in names(build_transforms(64, train=True))
+    assert "RadiometricJitter" not in names(build_transforms(64, train=False, radiometric=True))
