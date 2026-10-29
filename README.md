@@ -1,36 +1,24 @@
-# Machine Learning Exercises
+# TerraLens
 
-This repository contains a collection of exercises and projects related to machine learning.
+Satellite land-cover classification and mapping with deep learning.
 
-## Contents
+> 🚧 Work in progress. This repository started as my collection of PyTorch exercise notebooks (2025) and is being rebuilt into a complete land-cover analysis tool.
 
-- Example notebooks and scripts for various machine learning algorithms
-- Datasets for practicing ML techniques
-- Solutions and explanations
+## Goal
 
-## Getting Started
+Classify Sentinel-2 satellite imagery into 10 land-cover classes (forest, crops, water, urban areas, and more) and turn large scenes into land-cover maps, with explanations of what the model looked at.
 
-1. Clone the repository:
-   ```
-   git clone https://github.com/Med00amine/Machine-Learning-Exercises-.git
-   ```
+## Roadmap
 
-2. Explore the exercises in the repository.
-
-3. Run the notebooks or scripts using your preferred environment (e.g., Jupyter, VSCode, PyCharm).
-
-## Requirements
-
-- Python 3.x
-- Common ML libraries (numpy, pandas, scikit-learn, matplotlib, etc.)
-
-Install requirements with:
-```
-pip install -r requirements.txt
-```
+- [ ] Data pipeline (EuroSAT, stratified splits, augmentation)
+- [ ] Transfer-learning model zoo and training loop
+- [ ] Evaluation report and model comparison
+- [ ] Grad-CAM explainability
+- [ ] Large-scene land-cover mapping
+- [ ] REST API (FastAPI)
+- [ ] Web interface
+- [ ] Docker image and model release
 
 ## License
 
-This project is open source.
-
----
+[MIT](LICENSE)
