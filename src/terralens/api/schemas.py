@@ -28,6 +28,7 @@ class ClassInfo(BaseModel):
 class ModelInfoOut(BaseModel):
     architecture: str
     img_size: int
+    temperature: float = Field(description="Temperature-scaling factor applied to the logits")
     parameters: int
     classes: list[ClassInfo]
     metrics: dict
