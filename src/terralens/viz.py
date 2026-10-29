@@ -81,12 +81,14 @@ def plot_per_class_f1(per_class: dict, path: Path) -> None:
 def plot_misclassified(samples: list[tuple], path: Path, cols: int = 6) -> None:
     """Grid of (image, true, predicted, confidence) tuples."""
     rows = int(np.ceil(len(samples) / cols))
-    fig, axes = plt.subplots(rows, cols, figsize=(2.2 * cols, 2.6 * rows), squeeze=False)
+    fig, axes = plt.subplots(rows, cols, figsize=(3.0 * cols, 3.2 * rows), squeeze=False)
     for ax in axes.ravel():
         ax.axis("off")
     for ax, (image, true, pred, conf) in zip(axes.ravel(), samples, strict=False):
         ax.imshow(image, interpolation="nearest")
-        ax.set_title(f"true: {label_for(true)}\npred: {label_for(pred)} ({conf:.0%})", fontsize=8)
+        ax.set_title(
+            f"true: {label_for(true)}\npred: {label_for(pred)}\n{conf:.0%} confident", fontsize=8.5
+        )
     fig.suptitle("Most confident mistakes on the test set", fontweight="bold")
     _save(fig, path)
 

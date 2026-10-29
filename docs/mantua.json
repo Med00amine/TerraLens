@@ -1,0 +1,23 @@
+{
+  "scene": "S2A_32TPR_20250613_0_L2A",
+  "date": "2025-06-13T10:18:28.484000Z",
+  "cloud_cover": 0.530035,
+  "center_lon_lat": [
+    10.8,
+    45.17
+  ],
+  "bounds": [
+    633760.0,
+    4998300.0,
+    649120.0,
+    5008540.0
+  ],
+  "crs": "EPSG:32632",
+  "size_px": [
+    1536,
+    1024
+  ],
+  "gsd_m": 10,
+  "source": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/32/T/PR/2025/6/S2A_32TPR_20250613_0_L2A/TCI.tif",
+  "attribution": "Contains modified Copernicus Sentinel data 2025"
+}

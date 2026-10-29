@@ -52,3 +52,8 @@ def test_radiometric_augmentation_is_opt_in():
 def test_jpeg_augmentation_is_on_by_default():
     assert parse_args([]).jpeg_aug is True
     assert parse_args(["--no-jpeg-aug"]).jpeg_aug is False
+
+
+def test_jpeg_min_quality_flag():
+    assert parse_args([]).jpeg_min_quality == 50
+    assert parse_args(["--jpeg-min-quality", "75"]).jpeg_min_quality == 75

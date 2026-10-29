@@ -129,3 +129,9 @@ def test_jpeg_augmentation_runs_before_resize():
     assert "RandomJPEG" not in [
         type(t).__name__ for t in build_transforms(96, train=False).transforms
     ]
+
+
+def test_jpeg_min_quality_is_configurable():
+    tf = build_transforms(64, train=True, jpeg=True, jpeg_min_quality=80)
+    jpeg = next(t for t in tf.transforms if type(t).__name__ == "RandomJPEG")
+    assert jpeg.quality == (80, 95)

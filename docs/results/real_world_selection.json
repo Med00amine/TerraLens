@@ -1,0 +1,44 @@
+{
+  "resnet18-64": {
+    "lake_constance_homogeneous": 0.9361702127659575,
+    "mantua_homogeneous": 0.5909090909090909,
+    "pooled_homogeneous": 0.7692307692307693,
+    "pooled_all_tiles": 0.4869791666666667
+  },
+  "resnet18-128": {
+    "lake_constance_homogeneous": 0.9574468085106383,
+    "mantua_homogeneous": 0.6590909090909091,
+    "pooled_homogeneous": 0.8131868131868132,
+    "pooled_all_tiles": 0.51953125
+  },
+  "resnet18-224": {
+    "lake_constance_homogeneous": 0.9787234042553191,
+    "mantua_homogeneous": 0.7386363636363636,
+    "pooled_homogeneous": 0.8626373626373627,
+    "pooled_all_tiles": 0.5625
+  },
+  "resnet50-128": {
+    "lake_constance_homogeneous": 0.9148936170212766,
+    "mantua_homogeneous": 0.625,
+    "pooled_homogeneous": 0.7747252747252747,
+    "pooled_all_tiles": 0.53125
+  },
+  "efficientnet_b0-128": {
+    "lake_constance_homogeneous": 0.9042553191489362,
+    "mantua_homogeneous": 0.4659090909090909,
+    "pooled_homogeneous": 0.6923076923076923,
+    "pooled_all_tiles": 0.4596354166666667
+  },
+  "mobilenet_v3_large-128": {
+    "lake_constance_homogeneous": 0.9893617021276596,
+    "mantua_homogeneous": 0.4659090909090909,
+    "pooled_homogeneous": 0.7362637362637363,
+    "pooled_all_tiles": 0.48046875
+  },
+  "resnet18-128 + JPEG aug (deployed)": {
+    "lake_constance_homogeneous": 0.9042553191489362,
+    "mantua_homogeneous": 0.75,
+    "pooled_homogeneous": 0.8296703296703297,
+    "pooled_all_tiles": 0.5768229166666666
+  }
+}

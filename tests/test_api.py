@@ -39,6 +39,7 @@ def test_health(client):
 def test_model_info(client):
     body = client.get("/api/model").json()
     assert body["architecture"] == "resnet18"
+    assert body["temperature"] > 0
     assert [c["name"] for c in body["classes"]] == ["Forest", "River", "SeaLake"]
 
 
