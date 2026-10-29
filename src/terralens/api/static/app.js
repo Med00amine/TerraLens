@@ -100,7 +100,20 @@ function showPreview(zone, file) {
   img.dataset.url = url;
   img.hidden = false;
   zone.classList.add("has-image");
+  showCompressionTip(zone, file);
   return url;
+}
+
+// Heavy JPEG compression measurably lowers accuracy (see README, "Robustness").
+function showCompressionTip(zone, file) {
+  let tip = zone.nextElementSibling?.classList.contains("tip") ? zone.nextElementSibling : null;
+  if (!tip) {
+    tip = document.createElement("p");
+    tip.className = "tip";
+    tip.textContent = "Tip: JPEG compression can blur the details the model relies on. Lossless PNG or TIFF exports give the most reliable results.";
+    zone.after(tip);
+  }
+  tip.hidden = file.type !== "image/jpeg" || Boolean(file.isSample);
 }
 
 // ------------------------------------------------------------------------ model & samples
@@ -139,6 +152,7 @@ async function loadSamples() {
       for (const b of btn.parentElement.children) b.classList.toggle("active", b === btn);
       const blob = await (await fetch(sample.url)).blob();
       const file = new File([blob], sample.url.split("/").pop(), { type: blob.type });
+      file.isSample = true; // EuroSAT originals are JPEGs; no compression tip for them
       if (sample.kind === "tile") classifyTile(file);
       else selectScene(file);
     });

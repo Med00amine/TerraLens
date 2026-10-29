@@ -144,6 +144,14 @@ main { max-width: 1280px; margin: 0 auto; padding: 24px; }
   font-weight: 700;
 }
 .hint { color: var(--muted); font-size: 0.88rem; margin: 4px 0 14px; }
+.tip {
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--text);
+  font-size: 0.8rem;
+}
 
 /* ---------------------------------------------------------------- dropzone */
 .dropzone {
