@@ -41,6 +41,7 @@ class TrainConfig:
     label_smoothing: float = 0.1
     radiometric_aug: bool = False
     jpeg_aug: bool = True
+    jpeg_min_quality: int = 50
     patience: int = 4
     num_workers: int = 4
     seed: int = 42
@@ -151,6 +152,7 @@ def train(config: TrainConfig) -> dict:
         test_fraction=config.test_fraction,
         radiometric_aug=config.radiometric_aug,
         jpeg_aug=config.jpeg_aug,
+        jpeg_min_quality=config.jpeg_min_quality,
     )
     print(
         f"Data: {len(data.split.train)} train / {len(data.split.val)} val / "

@@ -115,10 +115,11 @@ def build_transforms(
     std: Sequence[float] = IMAGENET_STD,
     radiometric: bool = False,
     jpeg: bool = False,
+    jpeg_min_quality: int = 50,
 ) -> transforms.Compose:
     """Preprocessing for training (with augmentation) or evaluation/inference."""
     # JPEG artefacts are simulated at native resolution, before resizing.
-    steps: list = [RandomJPEG()] if train and jpeg else []
+    steps: list = [RandomJPEG(quality=(jpeg_min_quality, 95))] if train and jpeg else []
     steps.append(transforms.Resize((img_size, img_size)))
     if train:
         steps += [
@@ -224,10 +225,17 @@ def make_dataloaders(
     test_fraction: float = 0.15,
     radiometric_aug: bool = False,
     jpeg_aug: bool = False,
+    jpeg_min_quality: int = 50,
 ) -> DataBundle:
     """Stratified train/val/test loaders over a dataset that yields PIL images."""
     split = stratified_split(dataset.targets, val_fraction, test_fraction, seed)
-    train_tf = build_transforms(img_size, train=True, radiometric=radiometric_aug, jpeg=jpeg_aug)
+    train_tf = build_transforms(
+        img_size,
+        train=True,
+        radiometric=radiometric_aug,
+        jpeg=jpeg_aug,
+        jpeg_min_quality=jpeg_min_quality,
+    )
     eval_tf = build_transforms(img_size, train=False)
 
     loader_kwargs = {
