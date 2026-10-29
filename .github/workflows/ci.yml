@@ -36,3 +36,19 @@ jobs:
         run: pip install -e ".[dev]"
       - name: Run tests
         run: pytest --cov=terralens --cov-report=term-missing
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image (weights are mounted at runtime in CI)
+        run: docker build --build-arg MODEL_URL= -t terralens:ci .
+      - name: Smoke test
+        run: |
+          docker run -d --name terralens -p 8000:8000 terralens:ci
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:8000/api/health && break
+            sleep 2
+          done
+          curl -sf http://localhost:8000/api/health | grep -q '"version"'
+          curl -sf http://localhost:8000/ | grep -q "TerraLens"
