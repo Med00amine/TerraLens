@@ -1,0 +1,23 @@
+{
+  "scene": "S2B_32TNT_20250808_1_L2A",
+  "date": "2025-08-08T10:27:46.950000Z",
+  "cloud_cover": 0.00135,
+  "center_lon_lat": [
+    9.48,
+    47.68
+  ],
+  "bounds": [
+    528340.0,
+    5275730.0,
+    543700.0,
+    5285970.0
+  ],
+  "crs": "EPSG:32632",
+  "size_px": [
+    1536,
+    1024
+  ],
+  "gsd_m": 10,
+  "source": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/32/T/NT/2025/8/S2B_32TNT_20250808_1_L2A/TCI.tif",
+  "attribution": "Contains modified Copernicus Sentinel data 2025"
+}
