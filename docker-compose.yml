@@ -1,0 +1,10 @@
+services:
+  terralens:
+    build: .
+    image: terralens:latest
+    ports:
+      - "8000:8000"
+    environment:
+      TERRALENS_MAX_UPLOAD_MB: "20"
+      TERRALENS_MAX_SCENE_PIXELS: "16777216"
+    restart: unless-stopped
