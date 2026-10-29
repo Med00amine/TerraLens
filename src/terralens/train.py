@@ -18,6 +18,7 @@ import torch
 from torch import nn
 
 from terralens import __version__
+from terralens.calibration import calibrate
 from terralens.constants import IMAGENET_MEAN, IMAGENET_STD
 from terralens.data import load_dataset, make_dataloaders
 from terralens.models import ARCHITECTURES, build_model, count_parameters
@@ -106,6 +107,7 @@ def save_checkpoint(
     config: TrainConfig,
     class_names: list[str],
     metrics: dict,
+    temperature: float = 1.0,
 ) -> None:
     """Save weights together with everything needed to use them for inference."""
     torch.save(
@@ -118,6 +120,7 @@ def save_checkpoint(
             "img_size": config.img_size,
             "mean": list(IMAGENET_MEAN),
             "std": list(IMAGENET_STD),
+            "temperature": temperature,
             "state_dict": {k: v.detach().cpu() for k, v in model.state_dict().items()},
             "metrics": metrics,
             "config": asdict(config),
@@ -207,6 +210,7 @@ def train(config: TrainConfig) -> dict:
     state = torch.load(checkpoint_path, map_location=device, weights_only=True)
     model.load_state_dict(state["state_dict"])
     te = run_epoch(model, data.test, criterion, device, amp=amp)
+    calibration = calibrate(model, data.val, data.test, device)
 
     summary = {
         "model": config.model,
@@ -219,11 +223,18 @@ def train(config: TrainConfig) -> dict:
         "test_acc": te["acc"],
         "test_loss": te["loss"],
         "train_minutes": (time.perf_counter() - started) / 60,
+        **calibration,
     }
-    save_checkpoint(checkpoint_path, model, config, data.class_names, summary)
+    save_checkpoint(
+        checkpoint_path, model, config, data.class_names, summary, calibration["temperature"]
+    )
     (out / "history.json").write_text(json.dumps(history, indent=2))
     (out / "metrics.json").write_text(json.dumps(summary, indent=2))
-    print(f"Test accuracy {te['acc']:.2%} (best epoch {best['epoch']}) -> {checkpoint_path}")
+    print(
+        f"Test accuracy {te['acc']:.2%} (best epoch {best['epoch']}), temperature "
+        f"{calibration['temperature']:.2f}, test ECE {calibration['test_ece_before']:.4f} -> "
+        f"{calibration['test_ece_after']:.4f} -> {checkpoint_path}"
+    )
     return summary
 
 
